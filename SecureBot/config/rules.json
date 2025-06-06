@@ -1,0 +1,11 @@
+{
+  "suspiciousElements": [
+    "script[src*='.php']",
+    "iframe[sandbox]",
+    "meta[http-equiv='refresh']"
+  ],
+  "blockedDomains": [
+    "cryptominer.com",
+    "malicious-domain.net"
+  ]
+}
