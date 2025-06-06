@@ -14,17 +14,22 @@
     }
 
     init() {
+      this.logIntro(); // Console message
       this.startDOMObserver();
       this.hookNetworkRequests();
-      this.checkEnvironment();
+      this.checkEnvironment?.(); // Optional if not implemented yet
       setInterval(() => this.runSecurityScan(), this.config.scanInterval);
+    }
+
+    logIntro() {
+      console.log(`%cSecurity implemented by Naitik's Security Bot`, 'color: green; font-weight: bold; font-size: 16px;');
     }
 
     startDOMObserver() {
       new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           mutation.addedNodes.forEach(node => {
-            this.analyzeNode(node);
+            this.analyzeNode(node);  // ✅ Now matches the correct method
           });
         });
       }).observe(document.documentElement, {
@@ -33,7 +38,7 @@
       });
     }
 
-    analyeNode(node) {
+    analyzeNode(node) {
       // Implement security checks here
       if (node.nodeType === 1 && /script|iframe/i.test(node.tagName)) {
         this.detectThreat('SuspiciousElement', { element: node });
@@ -68,9 +73,9 @@
         timestamp: new Date(),
         page: window.location.href
       };
-      
+
       if (this.config.debug) console.warn('[SecureBot] Threat:', threat);
-      
+
       if (this.config.reportUrl) {
         this.reportThreat(threat);
       }
@@ -81,9 +86,8 @@
     }
 
     runSecurityScan() {
-      this.checkLoadedScripts();
-      this.checkCookies();
-      // Add more checks
+      this.checkLoadedScripts?.(); // Optional chaining in case not implemented
+      this.checkCookies?.();       // Optional chaining
     }
   }
 
@@ -94,8 +98,5 @@
       new SecureBot();
     }
   }
-console.log(`
-%cSecurity implemented by Naitik's Security Bot
-`, 'color: green; font-weight: bold; font-size: 16px;');
 
 })(window, document);
