@@ -12,26 +12,18 @@
       };
       this.init();
     }
+    checkEnvironment() {
+  if (this.config.debug) {
+    console.log('[SecureBot] Environment check passed.');
+  }
+}
+
 
     init() {
-      this.logIntro();
       this.startDOMObserver();
       this.hookNetworkRequests();
-      this.checkEnvironment(); // Now defined
+      this.checkEnvironment();
       setInterval(() => this.runSecurityScan(), this.config.scanInterval);
-    }
-
-    logIntro() {
-      console.log(
-        `%cSecurity implemented by Naitik's Security Bot`,
-        'color: green; font-weight: bold; font-size: 16px;'
-      );
-    }
-
-    checkEnvironment() {
-      if (this.config.debug) {
-        console.log('[SecureBot] Environment check passed.');
-      }
     }
 
     startDOMObserver() {
@@ -47,9 +39,10 @@
       });
     }
 
-    analyzeNode(node) {
+    analyeNode(node) {
+      // Implement security checks here
       if (node.nodeType === 1 && /script|iframe/i.test(node.tagName)) {
-        this.detectThreat('SuspiciousElement', { element: node.outerHTML });
+        this.detectThreat('SuspiciousElement', { element: node });
       }
     }
 
@@ -78,52 +71,29 @@
       const threat = {
         type,
         data,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
         page: window.location.href
       };
-
-      if (this.config.debug) {
-        console.warn('[SecureBot] Threat Detected:', threat);
-      }
-
+      
+      if (this.config.debug) console.warn('[SecureBot] Threat:', threat);
+      
       if (this.config.reportUrl) {
         this.reportThreat(threat);
       }
     }
 
     reportThreat(threat) {
-      try {
-        navigator.sendBeacon(this.config.reportUrl, JSON.stringify(threat));
-      } catch (e) {
-        if (this.config.debug) {
-          console.error('[SecureBot] Failed to report threat:', e);
-        }
-      }
+      navigator.sendBeacon(this.config.reportUrl, JSON.stringify(threat));
     }
 
     runSecurityScan() {
       this.checkLoadedScripts();
       this.checkCookies();
-    }
-
-    checkLoadedScripts() {
-      const scripts = Array.from(document.scripts);
-      scripts.forEach(script => {
-        if (script.src && !script.src.startsWith(location.origin)) {
-          this.detectThreat('ExternalScript', { src: script.src });
-        }
-      });
-    }
-
-    checkCookies() {
-      const cookies = document.cookie;
-      if (!cookies) {
-        this.detectThreat('MissingCookies', {});
-      }
+      // Add more checks
     }
   }
 
-  // Attach SecureBot globally
+  // Auto-initialize if included via script tag
   if (typeof window !== 'undefined') {
     window.SecureBot = SecureBot;
     if (window.SecureBotAutoInit !== false) {
