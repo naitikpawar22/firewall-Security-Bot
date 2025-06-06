@@ -94,5 +94,8 @@
       new SecureBot();
     }
   }
+console.log(`
+%cSecurity implemented by Naitik's Security Bot
+`, 'color: green; font-weight: bold; font-size: 16px;');
 
 })(window, document);
